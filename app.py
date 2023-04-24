@@ -2,9 +2,9 @@ import openai
 import streamlit as st
 from streamlit_chat import message
 from EmbeddingQuery import EmbeddingQuery as eq
-import s3fs
 
-fs = s3fs.S3FileSystem(anon=False)
+# openai api key
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # retrieve file contents
 EMBEDDINGS_PATH = "s3://cbaanswerbot/cba_2015_base.csv"

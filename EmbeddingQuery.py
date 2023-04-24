@@ -4,7 +4,7 @@ import openai  # for calling the OpenAI API
 import pandas as pd  # for storing text and embeddings data
 import tiktoken  # for counting tokens
 from scipy import spatial  # for calculating vector similarities for search
-import s3fs  # for reading from S3
+import streamlit as st  # for building the app
 
 class EmbeddingQuery:
     def __init__(self, query, embeddings_path, embeddings_model="text-embedding-ada-002", gpt_model="gpt-3.5-turbo"):
@@ -12,11 +12,14 @@ class EmbeddingQuery:
         self.embeddings_model = embeddings_model
         self.gpt_model = gpt_model
 
-        # inialize s3 file system
-        self.fs = s3fs.S3FileSystem(anon=False)
-
-        # download pre-chunked text and pre-computed embeddings
-        self.df = pd.read_csv(embeddings_path)
+        # download pre-chunked text and pre-computed embeddings from S3
+        self.df = pd.read_csv(
+            f"s3://{embeddings_path}",
+            storage_options={
+                "key": st.secrets["AWS_ACCESS_KEY_ID"],
+                "secret": st.secrets["AWS_SECRET_ACCESS_KEY"],
+            },
+        )
 
         # convert embeddings from CSV str type back to list type
         self.df['embedding'] = self.df['embedding'].apply(ast.literal_eval)
