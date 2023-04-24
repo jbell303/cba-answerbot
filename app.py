@@ -2,8 +2,12 @@ import openai
 import streamlit as st
 from streamlit_chat import message
 from EmbeddingQuery import EmbeddingQuery as eq
+import s3fs
 
-EMBEDDINGS_PATH = "data/cba_2015_base.csv"
+fs = s3fs.S3FileSystem(anon=False)
+
+# retrieve file contents
+EMBEDDINGS_PATH = "s3://cbaanswerbot/cba_2015_base.csv"
 
 # Setting page title and header
 st.set_page_config(page_title="Fred-e", page_icon=":robot_face:")
