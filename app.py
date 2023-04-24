@@ -34,15 +34,15 @@ st.markdown("<ul>\
 # openai.organization = "<YOUR_OPENAI_ORG_ID>"
 # openai.api_key = "<YOUR_OPENAI_API_KEY>"
 
+introduction = 'Use the below definitions from the fedex pilot bargaining agreement to answer the subsequent question. If the answer cannot be found in the contract, write "I could not find an answer." If additional information is needed from the prompter, say what information is needed.'
+
 # Initialise session state variables
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
 if 'past' not in st.session_state:
     st.session_state['past'] = []
 if 'messages' not in st.session_state:
-    st.session_state['messages'] = [
-        {"role": "system", "content": "You are a helpful assistant."}
-    ]
+    st.session_state['messages'] = []
 if 'model_name' not in st.session_state:
     st.session_state['model_name'] = []
 if 'cost' not in st.session_state:
@@ -70,7 +70,7 @@ if clear_button:
     st.session_state['generated'] = []
     st.session_state['past'] = []
     st.session_state['messages'] = [
-        {"role": "system", "content": "You answer questions about the fedex pilot contract."}
+        {"role": "system", "content": f"{introduction}"}
     ]
     st.session_state['number_tokens'] = []
     st.session_state['model_name'] = []
@@ -84,7 +84,10 @@ if clear_button:
 def generate_response(prompt):
     # create a new query object
     query = eq(prompt, EMBEDDINGS_PATH, gpt_model=model)
-    st.session_state['messages'].append({"role": "user", "content": query.query_message()})
+    st.session_state['messages'] = [
+        {"role": "system", "content": f"{introduction}"}
+    ]
+    st.session_state['messages'].append({"role": "user", "content": query.query_message(introduction)})
 
     completion = openai.ChatCompletion.create(
         model=model,

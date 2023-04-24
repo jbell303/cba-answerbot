@@ -53,13 +53,12 @@ class EmbeddingQuery:
 
     def query_message(
         self,
+        message: str = "",
         token_budget: int = 4096 - 500,
     ) -> str:
         """Return a message for GPT, with relevant source texts pulled from a dataframe."""
         strings, relatednesses = self.strings_ranked_by_relatedness()
-        introduction = 'Use the below definitions from the fedex pilot bargaining agreement to answer the subsequent question. If the answer cannot be found in the contract, write "I could not find an answer." If additional information is needed from the prompter, say what information is needed.'
         question = f"\n\nQuestion: {self.query}"
-        message = introduction
         for string in strings:
             next_article = f'\n\nContract article section:\n"""\n{string}\n"""'
             if (
